@@ -1,0 +1,13 @@
+{
+  "name": "decorators",
+  "version": "1.0.0",
+  "description": "Decorators typescript",
+  "main": "index.js",
+  "author": "Gaddafi",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.5.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}
