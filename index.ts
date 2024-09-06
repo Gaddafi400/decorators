@@ -1,5 +1,6 @@
-import { timing } from './perfdecorators';
+import { timing, logTimings } from './perfdecorators';
 
+@logTimings
 class Users {
   private delay<T>(ms: number, value: T): Promise<T> {
     return new Promise((resolve) => setTimeout(() => resolve(value), ms));
@@ -42,4 +43,21 @@ class Users {
   allUsers.forEach((user, index) => {
     console.log(`User ${index + 1} fetched: ${JSON.stringify(user)}`);
   });
+
+  // @ts-ignore
+  console.log(`User timings array ${users.__timings['key']}`);
+
+  // @ts-ignore
+  users.addTiming('key1', 10);
+  // @ts-ignore
+  users.addTiming('key2', 20);
+  // @ts-ignore
+  users.addTiming('key3', 30);
+  // @ts-ignore
+  users.addTiming('key4', 15);
+
+  // @ts-ignore
+  console.log(users.getAverageTiming('key'));
+  // @ts-ignore
+  users.logAllTimings();
 })();

@@ -17,3 +17,40 @@ export function timing() {
     };
   };
 }
+
+export function logTimings<T extends { new (...args: any[]): {} }>(constructor: T) {
+  return class extends constructor {
+    __timings: { [key: string]: number[] } = {
+      key: [10, 20, 30],
+    };
+
+    constructor(...args: any[]) {
+      super(...args);
+    }
+
+    addTiming(key: string, timing: number) {
+      if (!this.__timings[key]) {
+        this.__timings[key] = [];
+      }
+      this.__timings[key].push(timing);
+    }
+
+    getTimings(key: string): number[] | undefined {
+      return this.__timings[key];
+    }
+
+    getAverageTiming(key: string): number | undefined {
+      const timings = this.getTimings(key);
+
+      if (!timings || timings.length === 0) {
+        return undefined;
+      }
+      const sum = timings.reduce((acc, val) => acc + val, 0);
+      return sum / timings.length;
+    }
+
+    logAllTimings() {
+      console.log(this.__timings);
+    }
+  };
+}
