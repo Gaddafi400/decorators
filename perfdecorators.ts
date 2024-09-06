@@ -12,13 +12,27 @@ export function timing() {
       const start = performance.now();
       const result = await originalMethod.apply(this, args);
       const end = performance.now();
+
+      // Cast `this` to the class that contains `__timings` and `addTiming`
+      const self = this as {
+        __timings: { [key: string]: number[] };
+        addTiming: (key: string, timing: number) => void;
+      };
+
+      if (self.__timings && typeof self.addTiming === 'function') {
+        const timeTaken = end - start;
+        self.addTiming(propertyKey, timeTaken);
+      }
+
       console.log(`${propertyKey} took ${end - start} ms to execute.`);
       return result;
     };
   };
 }
 
-export function logTimings<T extends { new (...args: any[]): {} }>(constructor: T) {
+export function logTimings<T extends { new (...args: any[]): {} }>(
+  constructor: T
+) {
   return class extends constructor {
     __timings: { [key: string]: number[] } = {
       key: [10, 20, 30],
