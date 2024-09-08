@@ -1,6 +1,7 @@
 import { performance } from 'node:perf_hooks';
 
-export function timing() {
+
+export function timing(label?: string, threshold?: number) {
   return function (
     target: any,
     propertyKey: string,
@@ -12,19 +13,22 @@ export function timing() {
       const start = performance.now();
       const result = await originalMethod.apply(this, args);
       const end = performance.now();
+      const timeTaken = end - start;
 
-      // Cast `this` to the class that contains `__timings` and `addTiming`
+      // Only log if the time taken exceeds the threshold (if provided)
+      if (!threshold || timeTaken > threshold) {
+        console.log(`${label || propertyKey} took ${timeTaken} ms to execute.`);
+      }
+
+      // Store the timing in __timings if available
       const self = this as {
         __timings: { [key: string]: number[] };
         addTiming: (key: string, timing: number) => void;
       };
-
       if (self.__timings && typeof self.addTiming === 'function') {
-        const timeTaken = end - start;
         self.addTiming(propertyKey, timeTaken);
       }
 
-      console.log(`${propertyKey} took ${end - start} ms to execute.`);
       return result;
     };
   };
