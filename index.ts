@@ -1,6 +1,10 @@
 import { timing, logTimings } from './perfdecorators';
 
-@logTimings
+@logTimings({
+  initialTimings: {
+    exampleKey: [5, 10, 15],
+  },
+})
 class Users {
   private delay<T>(ms: number, value: T): Promise<T> {
     return new Promise((resolve) => setTimeout(() => resolve(value), ms));
